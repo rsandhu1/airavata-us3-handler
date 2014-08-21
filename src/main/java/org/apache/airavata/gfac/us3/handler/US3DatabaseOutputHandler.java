@@ -16,6 +16,7 @@ import org.apache.airavata.commons.gfac.type.MappingFactory;
 import org.apache.airavata.gfac.GFacException;
 import org.apache.airavata.gfac.core.context.JobExecutionContext;
 import org.apache.airavata.gfac.core.context.MessageContext;
+import org.apache.airavata.gfac.core.handler.AbstractHandler;
 import org.apache.airavata.gfac.core.handler.AbstractRecoverableHandler;
 import org.apache.airavata.gfac.core.handler.GFacHandler;
 import org.apache.airavata.gfac.core.handler.GFacHandlerException;
@@ -36,7 +37,7 @@ import org.apache.airavata.schemas.wec.NameValuePairType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class US3DatabaseOutputHandler extends AbstractRecoverableHandler {
+public class US3DatabaseOutputHandler extends AbstractHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(US3DatabaseOutputHandler.class);
 	private static String SELECTDATA = "Select * from analysis where gfacID = ?";
@@ -227,11 +228,4 @@ public class US3DatabaseOutputHandler extends AbstractRecoverableHandler {
 	public void setExperimentStatus(String _experimentStatus) {
 		this._experimentStatus = _experimentStatus;
 	}
-
-	@Override
-	public void recover(JobExecutionContext jobExecutionContext) throws GFacHandlerException {
-		// TODO Auto-generated method stub
-
-	}
-
 }
