@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.airavata.commons.gfac.type.ActualParameter;
+import org.apache.airavata.commons.gfac.type.MappingFactory;
 import org.apache.airavata.gfac.GFacException;
 import org.apache.airavata.gfac.core.context.JobExecutionContext;
 import org.apache.airavata.gfac.core.context.MessageContext;
@@ -62,25 +63,26 @@ public class US3DatabaseOutputHandler extends AbstractRecoverableHandler {
 
 	@Override
 	public void invoke(JobExecutionContext jobExecutionContext) throws GFacHandlerException {
+		super.invoke(jobExecutionContext);
 		PreparedStatement statement = null;
 		PreparedStatement statement1 = null;
 		ResultSet results = null;
 		FileInputStream tarData = null;
 		File tarFile = null;
 		ApplicationDeploymentDescriptionType app = jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription().getType();
-		String stdOutput = app.getStandardOutput();
-		String stdError = app.getStandardError();
 		Map<String, Object> parameters = jobExecutionContext.getOutMessageContext().getParameters();
 		String experimentId = jobExecutionContext.getExperimentID();
 		try {
+			String stdOutput =  GFacUtils.readFileToString(app.getStandardOutput());
+			String stdError =  GFacUtils.readFileToString(app.getStandardError());
 			if (jobExecutionContext.getStatus() != null && jobExecutionContext.getStatus().equalsIgnoreCase("CANCELED")) {
 				setExperimentStatus(US3JobStatus.CANCELED.toString());
 			} else {
 				for (String paramName : parameters.keySet()) {
 					ActualParameter actualParameter = (ActualParameter) parameters.get(paramName);
 					if ("URI".equals(actualParameter.getType().getType().toString())) {
-						String outputPath = ((URIParameterType) actualParameter.getType()).getValue();
-						if (outputPath != null && !outputPath.isEmpty()) {
+						String outputPath = MappingFactory.toString(actualParameter);
+		            	if (outputPath != null && !outputPath.isEmpty()) {
 							int mid = outputPath.lastIndexOf(".");
 							String extension = outputPath.substring(mid + 1, outputPath.length());
 							if (!extension.equalsIgnoreCase("tar")) {
